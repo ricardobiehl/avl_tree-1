@@ -34,27 +34,15 @@
 /* Node in an AVL tree.  Embed this in some other data structure.  */
 struct avl_tree_node {
 
+	struct avl_tree_node *parent;
+
 	/* Pointer to left child or NULL  */
 	struct avl_tree_node *left;
 
 	/* Pointer to right child or NULL  */
 	struct avl_tree_node *right;
 
-	/* Pointer to parent combined with the balance factor.  This saves 4 or
-	 * 8 bytes of memory depending on the CPU architecture.
-	 *
-	 * Low 2 bits:  One greater than the balance factor of this subtree,
-	 * which is equal to height(right) - height(left).  The mapping is:
-	 *
-	 * 00 => -1
-	 * 01 =>  0
-	 * 10 => +1
-	 * 11 => undefined
-	 *
-	 * The rest of the bits are the pointer to the parent node.  It must be
-	 * 4-byte aligned, and it will be NULL if this is the root node and
-	 * therefore has no parent.  */
-	uintptr_t parent_balance;
+	int balance;
 };
 
 /* Cast an AVL tree node to the containing data structure.  */
@@ -66,14 +54,14 @@ struct avl_tree_node {
 static AVL_INLINE struct avl_tree_node *
 avl_get_parent(const struct avl_tree_node *node)
 {
-	return (struct avl_tree_node *)(node->parent_balance & ~3);
+	return node->parent;
 }
 
 /* Marks the specified AVL tree node as unlinked from any tree.  */
 static AVL_INLINE void
 avl_tree_node_set_unlinked(struct avl_tree_node *node)
 {
-	node->parent_balance = (uintptr_t)node;
+	node->parent = node;
 }
 
 /* Returns true iff the specified AVL tree node has been marked with
@@ -82,7 +70,7 @@ avl_tree_node_set_unlinked(struct avl_tree_node *node)
 static AVL_INLINE bool
 avl_tree_node_is_unlinked(const struct avl_tree_node *node)
 {
-	return node->parent_balance == (uintptr_t)node;
+	return node->parent == node;
 }
 
 /* (Internal use only)  */
@@ -261,7 +249,8 @@ avl_tree_insert(struct avl_tree_node **root_ptr,
 			return cur;
 	}
 	*cur_ptr = item;
-	item->parent_balance = (uintptr_t)cur | 1;
+	item->parent = cur;
+	item->balance = 0;
 	avl_tree_rebalance_after_insert(root_ptr, item);
 	return NULL;
 }

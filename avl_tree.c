@@ -143,14 +143,15 @@ static AVL_INLINE void
 avl_set_parent_balance(struct avl_tree_node *node, struct avl_tree_node *parent,
 		       int balance_factor)
 {
-	node->parent_balance = (uintptr_t)parent | (balance_factor + 1);
+	node->parent = parent;
+	node->balance = balance_factor;
 }
 
 /* Sets the parent of the specified AVL tree node.  */
 static AVL_INLINE void
 avl_set_parent(struct avl_tree_node *node, struct avl_tree_node *parent)
 {
-	node->parent_balance = (uintptr_t)parent | (node->parent_balance & 3);
+	node->parent = parent;
 }
 
 /* Returns the balance factor of the specified AVL tree node --- that is, the
@@ -158,7 +159,7 @@ avl_set_parent(struct avl_tree_node *node, struct avl_tree_node *parent)
 static AVL_INLINE int
 avl_get_balance_factor(const struct avl_tree_node *node)
 {
-	return (int)(node->parent_balance & 3) - 1;
+	return node->balance;
 }
 
 /* Adds @amount to the balance factor of the specified AVL tree node.
@@ -167,7 +168,7 @@ avl_get_balance_factor(const struct avl_tree_node *node)
 static AVL_INLINE void
 avl_adjust_balance_factor(struct avl_tree_node *node, int amount)
 {
-	node->parent_balance += amount;
+	node->balance += amount;
 }
 
 static AVL_INLINE void
@@ -708,7 +709,8 @@ avl_tree_swap_with_successor(struct avl_tree_node **root_ptr,
 	Y->left = X->left;
 	avl_set_parent(X->left, Y);
 
-	Y->parent_balance = X->parent_balance;
+	Y->parent = X->parent;
+	Y->balance = X->balance;
 	avl_replace_child(root_ptr, avl_get_parent(X), X, Y);
 
 	return ret;
