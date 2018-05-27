@@ -1,4 +1,5 @@
-# Overview
+Overview
+========
 
 This is a zero-dependency, high performance C implementation of AVL trees.  It
 is intended to be incorporated into C programming projects that need to use
@@ -13,7 +14,9 @@ implementation can (but does not have to be) be built on top of it.
 This implementation is non-recursive, so it does not suffer from stack
 overflows.
 
-# Features
+
+Features
+========
 
 Briefly, the supported operations are:
 
@@ -25,7 +28,9 @@ Briefly, the supported operations are:
 
 See avl_tree.h for details.
 
-# Files
+
+Files
+=====
 
 - avl_generic:    Generic tree insert and look up operations.
 - avl_iteration:  Helpers to iterate over the tree.
@@ -35,7 +40,9 @@ See avl_tree.h for details.
 - avl_tree.c:  Implementation header.
 - test.c:      A test program.
 
-# License
+
+License
+=======
 
 This code and its accompanying files have been released into the public domain.
 There is NO WARRANTY, to the extent permitted by law.  See the CC0 Public Domain
