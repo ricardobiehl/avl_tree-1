@@ -1,6 +1,6 @@
 /*
- * avl_tree.c - intrusive, nonrecursive AVL tree data structure (self-balancing
- *		binary search tree), implementation file
+ * intrusive, nonrecursive AVL tree data structure (self-balancing
+ * binary search tree)
  *
  * Written in 2014-2016 by Eric Biggers <ebiggers3@gmail.com>
  *
