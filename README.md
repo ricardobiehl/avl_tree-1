@@ -27,8 +27,12 @@ See avl_tree.h for details.
 
 # Files
 
-- avl_tree.h:  Interface and inline functions.
-- avl_tree.c:  Non-inline functions.
+- avl_generic:    Generic tree insert and look up operations.
+- avl_iteration:  Helpers to iterate over the tree.
+- avl_traversal:  Helpers to traverse the tree.
+
+- avl_tree.h:  Implementation file.
+- avl_tree.c:  Implementation header.
 - test.c:      A test program.
 
 # License
