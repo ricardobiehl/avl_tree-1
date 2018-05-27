@@ -28,10 +28,10 @@
 #include "avl_tree.h"
 
 struct avl_tree_node *
-avl_tree_first_in_order(const struct avl_tree_node *root);
+avl_tree_first_in_order(const struct avl_tree_root *root);
 
 struct avl_tree_node *
-avl_tree_last_in_order(const struct avl_tree_node *root);
+avl_tree_last_in_order(const struct avl_tree_root *root);
 
 struct avl_tree_node *
 avl_tree_next_in_order(const struct avl_tree_node *node);
@@ -40,7 +40,7 @@ struct avl_tree_node *
 avl_tree_prev_in_order(const struct avl_tree_node *node);
 
 struct avl_tree_node *
-avl_tree_first_in_postorder(const struct avl_tree_node *root);
+avl_tree_first_in_postorder(const struct avl_tree_root *root);
 
 struct avl_tree_node *
 avl_tree_next_in_postorder(const struct avl_tree_node *prev,

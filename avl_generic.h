@@ -28,18 +28,18 @@
 #include "avl_tree.h"
 
 struct avl_tree_node *
-avl_tree_lookup(const struct avl_tree_node *root,
+avl_tree_lookup(const struct avl_tree_root *root,
                 const void *cmp_ctx,
                 int (*cmp)(const void *, const struct avl_tree_node *));
 
 struct avl_tree_node *
-avl_tree_lookup_node(const struct avl_tree_node *root,
+avl_tree_lookup_node(const struct avl_tree_root *root,
                      const struct avl_tree_node *node,
                      int (*cmp)(const struct avl_tree_node *,
                                 const struct avl_tree_node *));
 
 struct avl_tree_node *
-avl_tree_insert(struct avl_tree_node **root_ptr,
+avl_tree_insert(struct avl_tree_root *root,
                 struct avl_tree_node *item,
                 int (*cmp)(const struct avl_tree_node *,
                            const struct avl_tree_node *));

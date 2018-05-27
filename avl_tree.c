@@ -80,7 +80,7 @@ avl_adjust_balance_factor(struct avl_tree_node *node, int amount)
 }
 
 static AVL_INLINE void
-avl_replace_child(struct avl_tree_node **root_ptr,
+avl_replace_child(struct avl_tree_root *root,
 		  struct avl_tree_node *parent,
 		  struct avl_tree_node *old_child,
 		  struct avl_tree_node *new_child)
@@ -91,7 +91,7 @@ avl_replace_child(struct avl_tree_node **root_ptr,
 		else
 			parent->right = new_child;
 	} else {
-		*root_ptr = new_child;
+		root->avl_tree_node = new_child;
 	}
 }
 
@@ -123,7 +123,7 @@ avl_replace_child(struct avl_tree_node **root_ptr,
  * This updates pointers but not balance factors!
  */
 static AVL_INLINE void
-avl_rotate(struct avl_tree_node ** const root_ptr,
+avl_rotate(struct avl_tree_root * const root,
 	   struct avl_tree_node * const A, const int sign)
 {
 	struct avl_tree_node * const B = avl_get_child(A, -sign);
@@ -139,7 +139,7 @@ avl_rotate(struct avl_tree_node ** const root_ptr,
 	if (E)
 		avl_set_parent(E, A);
 
-	avl_replace_child(root_ptr, P, A, B);
+	avl_replace_child(root, P, A, B);
 }
 
 /*
@@ -175,14 +175,14 @@ avl_rotate(struct avl_tree_node ** const root_ptr,
  *
  * Returns a pointer to E and updates balance factors.  Except for those
  * two things, this function is equivalent to:
- *	avl_rotate(root_ptr, B, -sign);
- *	avl_rotate(root_ptr, A, +sign);
+ *	avl_rotate(root, B, -sign);
+ *	avl_rotate(root, A, +sign);
  *
  * See comment in avl_handle_subtree_growth() for explanation of balance
  * factor updates.
  */
 static AVL_INLINE struct avl_tree_node *
-avl_do_double_rotate(struct avl_tree_node ** const root_ptr,
+avl_do_double_rotate(struct avl_tree_root * const root,
 		     struct avl_tree_node * const B,
 		     struct avl_tree_node * const A, const int sign)
 {
@@ -208,7 +208,7 @@ avl_do_double_rotate(struct avl_tree_node ** const root_ptr,
 	if (F)
 		avl_set_parent(F, B);
 
-	avl_replace_child(root_ptr, P, A, E);
+	avl_replace_child(root, P, A, E);
 
 	return E;
 }
@@ -216,7 +216,7 @@ avl_do_double_rotate(struct avl_tree_node ** const root_ptr,
 /*
  * This function handles the growth of a subtree due to an insertion.
  *
- * @root_ptr
+ * @root
  *	Location of the tree's root pointer.
  *
  * @node
@@ -240,7 +240,7 @@ avl_do_double_rotate(struct avl_tree_node ** const root_ptr,
  * (single or double) rotation be done.
  */
 static AVL_INLINE bool
-avl_handle_subtree_growth(struct avl_tree_node ** const root_ptr,
+avl_handle_subtree_growth(struct avl_tree_root * const root,
 			  struct avl_tree_node * const node,
 			  struct avl_tree_node * const parent,
 			  const int sign)
@@ -312,7 +312,7 @@ avl_handle_subtree_growth(struct avl_tree_node ** const root_ptr,
 		 *	balance(B) = 0
 		 *	balance(A) = 0
 		 */
-		avl_rotate(root_ptr, parent, -sign);
+		avl_rotate(root, parent, -sign);
 
 		/* Equivalent to setting @parent's balance factor to 0.  */
 		avl_adjust_balance_factor(parent, -sign); /* A */
@@ -359,7 +359,7 @@ avl_handle_subtree_growth(struct avl_tree_node ** const root_ptr,
 		 *	height(E) = x + 2
 		 *	balance(E) = 0
 		 */
-		avl_do_double_rotate(root_ptr, node, parent, -sign);
+		avl_do_double_rotate(root, node, parent, -sign);
 	}
 
 	/* Height after rotation is unchanged; nothing more to do.  */
@@ -368,7 +368,7 @@ avl_handle_subtree_growth(struct avl_tree_node ** const root_ptr,
 
 /* Rebalance the tree after insertion of the specified node.  */
 void
-avl_tree_rebalance_after_insert(struct avl_tree_node **root_ptr,
+avl_tree_rebalance_after_insert(struct avl_tree_root *root,
 				struct avl_tree_node *inserted)
 {
 	struct avl_tree_node *node, *parent;
@@ -407,10 +407,10 @@ avl_tree_rebalance_after_insert(struct avl_tree_node **root_ptr,
 
 		/* The subtree rooted at @node has increased in height by 1.  */
 		if (node == parent->left)
-			done = avl_handle_subtree_growth(root_ptr, node,
+			done = avl_handle_subtree_growth(root, node,
 							 parent, -1);
 		else
-			done = avl_handle_subtree_growth(root_ptr, node,
+			done = avl_handle_subtree_growth(root, node,
 							 parent, +1);
 	} while (!done);
 }
@@ -418,7 +418,7 @@ avl_tree_rebalance_after_insert(struct avl_tree_node **root_ptr,
 /*
  * This function handles the shrinkage of a subtree due to a deletion.
  *
- * @root_ptr
+ * @root
  *	Location of the tree's root pointer.
  *
  * @parent
@@ -445,7 +445,7 @@ avl_tree_rebalance_after_insert(struct avl_tree_node **root_ptr,
  * will be set.
  */
 static AVL_INLINE struct avl_tree_node *
-avl_handle_subtree_shrink(struct avl_tree_node ** const root_ptr,
+avl_handle_subtree_shrink(struct avl_tree_root * const root,
 			  struct avl_tree_node *parent,
 			  const int sign,
 			  bool * const left_deleted_ret)
@@ -488,7 +488,7 @@ avl_handle_subtree_shrink(struct avl_tree_node ** const root_ptr,
 
 		if (sign * avl_get_balance_factor(node) >= 0) {
 
-			avl_rotate(root_ptr, parent, -sign);
+			avl_rotate(root, parent, -sign);
 
 			if (avl_get_balance_factor(node) == 0) {
 				/*
@@ -545,7 +545,7 @@ avl_handle_subtree_shrink(struct avl_tree_node ** const root_ptr,
 				avl_adjust_balance_factor(node, -sign);
 			}
 		} else {
-			node = avl_do_double_rotate(root_ptr, node,
+			node = avl_do_double_rotate(root, node,
 						    parent, -sign);
 		}
 	}
@@ -559,7 +559,7 @@ avl_handle_subtree_shrink(struct avl_tree_node ** const root_ptr,
  * unlinks node X.  Returns the parent of X just before unlinking, without its
  * balance factor having been updated to account for the unlink.  */
 static AVL_INLINE struct avl_tree_node *
-avl_tree_swap_with_successor(struct avl_tree_node **root_ptr,
+avl_tree_swap_with_successor(struct avl_tree_root *root,
 			     struct avl_tree_node *X,
 			     bool *left_deleted_ret)
 {
@@ -619,7 +619,7 @@ avl_tree_swap_with_successor(struct avl_tree_node **root_ptr,
 
 	Y->parent = X->parent;
 	Y->balance = X->balance;
-	avl_replace_child(root_ptr, avl_get_parent(X), X, Y);
+	avl_replace_child(root, avl_get_parent(X), X, Y);
 
 	return ret;
 }
@@ -627,7 +627,7 @@ avl_tree_swap_with_successor(struct avl_tree_node **root_ptr,
 /*
  * Removes an item from the specified AVL tree.
  *
- * @root_ptr
+ * @root
  *	Location of the AVL tree's root pointer.  Indirection is needed
  *	because the root node may change if the tree needed to be rebalanced
  *	because of the deletion or if @node was the root node.
@@ -641,7 +641,7 @@ avl_tree_swap_with_successor(struct avl_tree_node **root_ptr,
  * avl_tree_node_set_unlinked().
  */
 void
-avl_tree_remove(struct avl_tree_node **root_ptr, struct avl_tree_node *node)
+avl_tree_remove(struct avl_tree_root *root, struct avl_tree_node *node)
 {
 	struct avl_tree_node *parent;
 	bool left_deleted = false;
@@ -651,7 +651,7 @@ avl_tree_remove(struct avl_tree_node **root_ptr, struct avl_tree_node *node)
 		 * with its in-order successor (which must exist in the
 		 * right subtree of @node and can have, at most, a right
 		 * child), then unlink @node.  */
-		parent = avl_tree_swap_with_successor(root_ptr, node,
+		parent = avl_tree_swap_with_successor(root, node,
 						      &left_deleted);
 		/* @parent is now the parent of what was @node's in-order
 		 * successor.  It cannot be NULL, since @node itself was
@@ -682,7 +682,7 @@ avl_tree_remove(struct avl_tree_node **root_ptr, struct avl_tree_node *node)
 		} else {
 			if (child)
 				avl_set_parent(child, parent);
-			*root_ptr = child;
+			root->avl_tree_node = child;
 			return;
 		}
 	}
@@ -690,10 +690,10 @@ avl_tree_remove(struct avl_tree_node **root_ptr, struct avl_tree_node *node)
 	/* Rebalance the tree.  */
 	do {
 		if (left_deleted)
-			parent = avl_handle_subtree_shrink(root_ptr, parent,
+			parent = avl_handle_subtree_shrink(root, parent,
 							   +1, &left_deleted);
 		else
-			parent = avl_handle_subtree_shrink(root_ptr, parent,
+			parent = avl_handle_subtree_shrink(root, parent,
 							   -1, &left_deleted);
 	} while (parent);
 }

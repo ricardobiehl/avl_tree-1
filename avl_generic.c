@@ -73,11 +73,11 @@
  * }
  */
 struct avl_tree_node *
-avl_tree_lookup(const struct avl_tree_node *root,
+avl_tree_lookup(const struct avl_tree_root *root,
                 const void *cmp_ctx,
                 int (*cmp)(const void *, const struct avl_tree_node *))
 {
-	const struct avl_tree_node *cur = root;
+	const struct avl_tree_node *cur = root->avl_tree_node;
 	
 	while (cur) {
 		int res = (*cmp)(cmp_ctx, cur);
@@ -96,12 +96,12 @@ avl_tree_lookup(const struct avl_tree_node *root,
  * expected to be in the same format as those already in the tree, with an
  * embedded 'struct avl_tree_node'.  */
 struct avl_tree_node *
-avl_tree_lookup_node(const struct avl_tree_node *root,
+avl_tree_lookup_node(const struct avl_tree_root *root,
                      const struct avl_tree_node *node,
                      int (*cmp)(const struct avl_tree_node *,
                                 const struct avl_tree_node *))
 {
-	const struct avl_tree_node *cur = root;
+	const struct avl_tree_node *cur = root->avl_tree_node;
 	
 	while (cur) {
 		int res = (*cmp)(node, cur);
@@ -118,7 +118,7 @@ avl_tree_lookup_node(const struct avl_tree_node *root,
 /*
  * Inserts an item into the specified AVL tree.
  *
- * @root_ptr
+ * @root
  *	Location of the AVL tree's root pointer.  Indirection is needed because
  *	the root node may change as a result of rotations caused by the
  *	insertion.  Initialize *root_ptr to NULL for an empty tree.
@@ -176,12 +176,13 @@ avl_tree_lookup_node(const struct avl_tree_node *root,
  * }
  */
 struct avl_tree_node *
-avl_tree_insert(struct avl_tree_node **root_ptr,
+avl_tree_insert(struct avl_tree_root *root,
                 struct avl_tree_node *item,
                 int (*cmp)(const struct avl_tree_node *,
                            const struct avl_tree_node *))
 {
-	struct avl_tree_node **cur_ptr = root_ptr, *cur = NULL;
+	struct avl_tree_node **cur_ptr = &root->avl_tree_node;
+	struct avl_tree_node  *cur = NULL;
 	int res;
 	
 	while (*cur_ptr) {
@@ -197,6 +198,6 @@ avl_tree_insert(struct avl_tree_node **root_ptr,
 	*cur_ptr = item;
 	item->parent = cur;
 	item->balance = 0;
-	avl_tree_rebalance_after_insert(root_ptr, item);
+	avl_tree_rebalance_after_insert(root, item);
 	return NULL;
 }

@@ -38,9 +38,9 @@ avl_get_child(const struct avl_tree_node *parent, int sign)
 }
 
 static AVL_INLINE struct avl_tree_node *
-avl_tree_first_or_last_in_order(const struct avl_tree_node *root, int sign)
+avl_tree_first_or_last_in_order(const struct avl_tree_root *root, int sign)
 {
-	const struct avl_tree_node *first = root;
+	const struct avl_tree_node *first = root->avl_tree_node;
 	
 	if (first)
 		while (avl_get_child(first, +sign))
@@ -51,7 +51,7 @@ avl_tree_first_or_last_in_order(const struct avl_tree_node *root, int sign)
 /* Starts an in-order traversal of the tree: returns the least-valued node, or
  * NULL if the tree is empty.  */
 struct avl_tree_node *
-avl_tree_first_in_order(const struct avl_tree_node *root)
+avl_tree_first_in_order(const struct avl_tree_root *root)
 {
 	return avl_tree_first_or_last_in_order(root, -1);
 }
@@ -59,7 +59,7 @@ avl_tree_first_in_order(const struct avl_tree_node *root)
 /* Starts a *reverse* in-order traversal of the tree: returns the
  * greatest-valued node, or NULL if the tree is empty.  */
 struct avl_tree_node *
-avl_tree_last_in_order(const struct avl_tree_node *root)
+avl_tree_last_in_order(const struct avl_tree_root *root)
 {
 	return avl_tree_first_or_last_in_order(root, 1);
 }
@@ -100,9 +100,9 @@ avl_tree_prev_in_order(const struct avl_tree_node *node)
 
 /* Starts a postorder traversal of the tree.  */
 struct avl_tree_node *
-avl_tree_first_in_postorder(const struct avl_tree_node *root)
+avl_tree_first_in_postorder(const struct avl_tree_root *root)
 {
-	const struct avl_tree_node *first = root;
+	const struct avl_tree_node *first = root->avl_tree_node;
 	
 	if (first)
 		while (first->left || first->right)

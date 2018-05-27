@@ -43,7 +43,7 @@ struct test_node {
 	struct avl_tree_node node;
 };
 
-static struct avl_tree_node *root = NULL;
+static struct avl_tree_root root = AVL_ROOT;
 
 static struct test_node *nodes;
 static int node_idx;
@@ -82,7 +82,7 @@ lookup(int n)
 
 	query.n = n;
 
-	result = avl_tree_lookup_node(root, &query.node, cmp_int_nodes);
+	result = avl_tree_lookup_node(&root, &query.node, cmp_int_nodes);
 
 	return result ? TEST_NODE(result) : NULL;
 }
@@ -135,14 +135,14 @@ __checktree(struct avl_tree_node *node)
 static void
 setheights(void)
 {
-	__setheights(root);
+	__setheights(root.avl_tree_node);
 }
 
 static void
 checktree(void)
 {
-	if (root)
-		__checktree(root);
+	if (root.avl_tree_node)
+		__checktree(root.avl_tree_node);
 }
 
 static int
@@ -162,7 +162,7 @@ verify(const int *data, int count)
 	qsort(data_sorted, count, sizeof(data[0]), cmp_ints);
 
 	/* Check in-order traversal.  */
-	for (cur = avl_tree_first_in_order(root), x = 0;
+	for (cur = avl_tree_first_in_order(&root), x = 0;
 	     cur;
 	     cur = avl_tree_next_in_order(cur), x++)
 	{
@@ -172,7 +172,7 @@ verify(const int *data, int count)
 	assert(x == count);
 
 	/* Check reverse in-order traversal.  */
-	for (cur = avl_tree_last_in_order(root), x = count - 1;
+	for (cur = avl_tree_last_in_order(&root), x = count - 1;
 	     cur;
 	     cur = avl_tree_prev_in_order(cur), x--)
 	{
@@ -182,7 +182,7 @@ verify(const int *data, int count)
 	assert(x == -1);
 
 	/* Check postorder traversal.  */
-	for (cur = avl_tree_first_in_postorder(root), x = 0;
+	for (cur = avl_tree_first_in_postorder(&root), x = 0;
 	     cur;
 	     cur = avl_tree_next_in_postorder(cur, avl_get_parent(cur)), x++)
 	{
@@ -258,7 +258,7 @@ main(void)
 			printf("Iteration %d/%d\n", i, num_iterations);
 
 		/* Reset the tree.  */
-		root = NULL;
+		root = AVL_ROOT;
 
 		/* Do the test with a random number of nodes, up to the
 		 * 'max_node_count'.  */
