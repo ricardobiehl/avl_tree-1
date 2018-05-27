@@ -44,6 +44,22 @@ struct avl_tree_node {
 	int balance;
 };
 
+struct avl_tree_root {
+	struct avl_tree_node *avl_tree_node;
+};
+
+#define AVL_ROOT  (struct avl_tree_root) {NULL, }
+
+struct avl_tree_link {
+	struct avl_tree_node *parent;
+	struct avl_tree_node **node;
+};
+
+#define tree_search_for_each(l, current) \
+	for ((l)->parent = NULL, (l)->node = current; \
+	     *current; \
+	     (l)->parent = *(l)->node, (l)->node = current)
+
 /* Cast an AVL tree node to the containing data structure.  */
 #define avl_tree_entry(entry, type, member) \
 	((type*) ((char *)(entry) - offsetof(type, member)))
