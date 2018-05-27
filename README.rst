@@ -15,6 +15,12 @@ This implementation is non-recursive, so it does not suffer from stack
 overflows.
 
 
+How to use it
+=============
+
+See ``example.c``.
+
+
 Features
 ========
 
