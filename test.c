@@ -1,7 +1,8 @@
 /*
  * This is a test program for avl_tree.h and avl_tree.c.  Compile with:
  *
- *	$ gcc test.c avl_tree.c -o test -std=c99 -Wall -O2
+ *	$ gcc test.c avl_generic.c avl_traversal.c avl_tree.c
+ *	      -o test -std=c99 -Wall -O2
  *
  * The test strategy isn't very sophisticated; it just relies on repeated random
  * operations to cover as many cases as possible.  Feel free to improve it.
@@ -23,7 +24,8 @@
  * see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-#include "avl_tree.h"
+#include "avl_generic.h"
+#include "avl_traversal.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -49,7 +51,7 @@ static int node_idx;
 static inline int
 avl_get_balance_factor(const struct avl_tree_node *node)
 {
-	return (int)(node->parent_balance & 3) - 1;
+	return node->balance;
 }
 
 #define TEST_NODE(__node) avl_tree_entry(__node, struct test_node, node)
