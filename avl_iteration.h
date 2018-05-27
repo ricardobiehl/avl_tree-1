@@ -56,39 +56,39 @@
  *		printf("%d\n", i->data);
  * }
  */
-#define avl_tree_for_each_in_order(child_struct, root,			\
-				   struct_name, struct_member)		\
-	for (struct avl_tree_node *_cur =				\
-		avl_tree_first_in_order(root);				\
-	     _cur && ((child_struct) =					\
-		      avl_tree_entry(_cur, struct_name,			\
-				     struct_member), 1);		\
+#define avl_tree_for_each_in_order(child_struct, root,          \
+	                           struct_name, struct_member)  \
+	for (struct avl_tree_node *_cur =                       \
+	     avl_tree_first_in_order(root);                     \
+	     _cur && ((child_struct) =                          \
+	              avl_tree_entry(_cur, struct_name,         \
+	                             struct_member), 1);        \
 	     _cur = avl_tree_next_in_order(_cur))
 
 /*
  * Like avl_tree_for_each_in_order(), but uses the reverse order.
  */
-#define avl_tree_for_each_in_reverse_order(child_struct, root,		\
-					   struct_name, struct_member)	\
-	for (struct avl_tree_node *_cur =				\
-		avl_tree_last_in_order(root);				\
-	     _cur && ((child_struct) =					\
-		      avl_tree_entry(_cur, struct_name,			\
-				     struct_member), 1);		\
+#define avl_tree_for_each_in_reverse_order(child_struct, root,          \
+	                                   struct_name, struct_member)  \
+	for (struct avl_tree_node *_cur =                               \
+	     avl_tree_last_in_order(root);                              \
+	     _cur && ((child_struct) =                                  \
+	              avl_tree_entry(_cur, struct_name,                 \
+	                             struct_member), 1);                \
 	     _cur = avl_tree_prev_in_order(_cur))
 
 /*
  * Like avl_tree_for_each_in_order(), but iterates through the nodes in
  * postorder, so the current node may be deleted or freed.
  */
-#define avl_tree_for_each_in_postorder(child_struct, root,		\
-				       struct_name, struct_member)	\
-	for (struct avl_tree_node *_cur =				\
-		avl_tree_first_in_postorder(root), *_parent;		\
-	     _cur && ((child_struct) =					\
-		      avl_tree_entry(_cur, struct_name,			\
-				     struct_member), 1)			\
-	          && (_parent = avl_get_parent(_cur), 1);		\
+#define avl_tree_for_each_in_postorder(child_struct, root,          \
+				       struct_name, struct_member)  \
+	for (struct avl_tree_node *_cur =                           \
+	     avl_tree_first_in_postorder(root), *_parent;           \
+	     _cur && ((child_struct) =                              \
+	              avl_tree_entry(_cur, struct_name,             \
+	                             struct_member), 1)             \
+	          && (_parent = avl_get_parent(_cur), 1);           \
 	     _cur = avl_tree_next_in_postorder(_cur, _parent))
 
 #endif /* _AVL_ITERATION_H */

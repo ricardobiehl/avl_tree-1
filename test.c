@@ -97,7 +97,7 @@ static void
 delete(int n)
 {
 	struct test_node *node;
-	
+
 	node = lookup(n);
 	assert(node);
 	deletenode(node);

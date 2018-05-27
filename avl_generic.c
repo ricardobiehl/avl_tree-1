@@ -78,7 +78,7 @@ avl_tree_lookup(const struct avl_tree_root *root,
                 int (*cmp)(const void *, const struct avl_tree_node *))
 {
 	const struct avl_tree_node *cur = root->avl_tree_node;
-	
+
 	while (cur) {
 		int res = (*cmp)(cmp_ctx, cur);
 		if (res < 0)
@@ -88,6 +88,7 @@ avl_tree_lookup(const struct avl_tree_root *root,
 		else
 			break;
 	}
+
 	return (struct avl_tree_node*)cur;
 }
 
@@ -102,7 +103,7 @@ avl_tree_lookup_node(const struct avl_tree_root *root,
                                 const struct avl_tree_node *))
 {
 	const struct avl_tree_node *cur = root->avl_tree_node;
-	
+
 	while (cur) {
 		int res = (*cmp)(node, cur);
 		if (res < 0)
@@ -112,6 +113,7 @@ avl_tree_lookup_node(const struct avl_tree_root *root,
 		else
 			break;
 	}
+
 	return (struct avl_tree_node*)cur;
 }
 
@@ -184,7 +186,7 @@ avl_tree_insert(struct avl_tree_root *root,
 	struct avl_tree_node **cur_ptr = &root->avl_tree_node;
 	struct avl_tree_node  *cur = NULL;
 	int res;
-	
+
 	while (*cur_ptr) {
 		cur = *cur_ptr;
 		res = (*cmp)(item, cur);
@@ -195,6 +197,7 @@ avl_tree_insert(struct avl_tree_root *root,
 		else
 			return cur;
 	}
+
 	*cur_ptr = item;
 	item->parent = cur;
 	item->balance = 0;

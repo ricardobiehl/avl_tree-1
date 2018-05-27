@@ -41,7 +41,7 @@ static AVL_INLINE struct avl_tree_node *
 avl_tree_first_or_last_in_order(const struct avl_tree_root *root, int sign)
 {
 	const struct avl_tree_node *first = root->avl_tree_node;
-	
+
 	if (first)
 		while (avl_get_child(first, +sign))
 			first = avl_get_child(first, +sign);
@@ -68,18 +68,17 @@ static AVL_INLINE struct avl_tree_node *
 avl_tree_next_or_prev_in_order(const struct avl_tree_node *node, int sign)
 {
 	const struct avl_tree_node *next;
-	
+
 	if (avl_get_child(node, +sign))
 		for (next = avl_get_child(node, +sign);
 		     avl_get_child(next, -sign);
-		next = avl_get_child(next, -sign))
-		     ;
-		     else
-			     for (next = avl_get_parent(node);
-				  next && node == avl_get_child(next, +sign);
-			     node = next, next = avl_get_parent(next))
-				  ;
-				  return (struct avl_tree_node *)next;
+		     next = avl_get_child(next, -sign));
+	else
+		for (next = avl_get_parent(node);
+		     next && node == avl_get_child(next, +sign);
+		     node = next, next = avl_get_parent(next));
+
+	return (struct avl_tree_node *)next;
 }
 
 /* Continues an in-order traversal of the tree: returns the next-greatest-valued
@@ -103,12 +102,12 @@ struct avl_tree_node *
 avl_tree_first_in_postorder(const struct avl_tree_root *root)
 {
 	const struct avl_tree_node *first = root->avl_tree_node;
-	
+
 	if (first)
 		while (first->left || first->right)
 			first = first->left ? first->left : first->right;
-		
-		return (struct avl_tree_node *)first;
+
+	return (struct avl_tree_node *)first;
 }
 
 /* Continues a postorder traversal of the tree.  @prev will not be deferenced as
@@ -120,11 +119,11 @@ avl_tree_next_in_postorder(const struct avl_tree_node *prev,
 			   const struct avl_tree_node *prev_parent)
 {
 	const struct avl_tree_node *next = prev_parent;
-	
+
 	if (next && prev == next->left && next->right)
 		for (next = next->right;
 		     next->left || next->right;
-		next = next->left ? next->left : next->right)
-		     ;
-		     return (struct avl_tree_node *)next;
+		     next = next->left ? next->left : next->right);
+
+	return (struct avl_tree_node *)next;
 }
