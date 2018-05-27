@@ -36,8 +36,8 @@ Files
 - avl_iteration:  Helpers to iterate over the tree.
 - avl_traversal:  Helpers to traverse the tree.
 
-- avl_tree.h:  Implementation file.
-- avl_tree.c:  Implementation header.
+- avl_tree:    AVL tree implementation.
+
 - test.c:      A test program.
 
 
