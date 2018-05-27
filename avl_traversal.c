@@ -24,6 +24,19 @@
 
 #include "avl_tree.h"
 
+/* Returns the left child (sign < 0) or the right child (sign > 0) of the
+ * specified AVL tree node.
+ * Note: for all calls of this, 'sign' is constant at compilation time,
+ * so the compiler can remove the conditional.  */
+static AVL_INLINE struct avl_tree_node *
+avl_get_child(const struct avl_tree_node *parent, int sign)
+{
+	if (sign < 0)
+		return parent->left;
+	else
+		return parent->right;
+}
+
 static AVL_INLINE struct avl_tree_node *
 avl_tree_first_or_last_in_order(const struct avl_tree_node *root, int sign)
 {
