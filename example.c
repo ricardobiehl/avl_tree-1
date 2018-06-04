@@ -70,7 +70,7 @@ avl_delete(struct avl_tree_root *root, unsigned long key)
 	if (avl_search(&link, root, key) == NULL)
 		return -1;
 
-	avl_tree_remove(&root->avl_tree_node, *link.node);
+	avl_tree_remove(root, *link.node);
 
 	return 0;
 }
@@ -86,7 +86,7 @@ avl_insert(struct avl_tree_root *root, struct example *new)
 	*link.node = &new->node;
 	(*link.node)->parent = link.parent;
 	(*link.node)->balance = 0;
-	avl_tree_rebalance_after_insert(&root->avl_tree_node, *link.node);
+	avl_tree_rebalance_after_insert(root, *link.node);
 
 	return 0;
 }
