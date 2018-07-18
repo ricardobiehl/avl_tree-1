@@ -93,6 +93,10 @@ extern void
 avl_tree_rebalance_after_insert(struct avl_tree_root *root,
 				struct avl_tree_node *inserted);
 
+void
+avl_tree_link_node(struct avl_tree_root *root, struct avl_tree_link *link,
+                   struct avl_tree_node *node);
+
 /* Removes an item from the specified AVL tree.
  * See implementation for details.  */
 extern void

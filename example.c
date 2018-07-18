@@ -83,10 +83,7 @@ avl_insert(struct avl_tree_root *root, struct example *new)
 	if (avl_search(&link, root, new->key) != NULL)
 		return -1;
 
-	*link.node = &new->node;
-	(*link.node)->parent = link.parent;
-	(*link.node)->balance = 0;
-	avl_tree_rebalance_after_insert(root, *link.node);
+	avl_tree_link_node(root, &link, &new->node);
 
 	return 0;
 }

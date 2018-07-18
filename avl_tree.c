@@ -415,6 +415,20 @@ avl_tree_rebalance_after_insert(struct avl_tree_root *root,
 	} while (!done);
 }
 
+void
+avl_tree_link_node(struct avl_tree_root *root, struct avl_tree_link *link,
+                   struct avl_tree_node *node)
+{
+	node->parent = link->parent;
+	node->balance = 0;
+	node->left = NULL;
+	node->right = NULL;
+
+	*link->node = node;
+
+	avl_tree_rebalance_after_insert(root, node);
+}
+
 /*
  * This function handles the shrinkage of a subtree due to a deletion.
  *
