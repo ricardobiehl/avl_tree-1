@@ -42,10 +42,12 @@ avl_tree_first_or_last_in_order(const struct avl_tree_root *root, int sign)
 {
 	const struct avl_tree_node *first = root->avl_tree_node;
 
-	if (first)
+	if (first) {
 		while (avl_get_child(first, +sign))
 			first = avl_get_child(first, +sign);
-		return (struct avl_tree_node *)first;
+	}
+
+	return (struct avl_tree_node *)first;
 }
 
 /* Starts an in-order traversal of the tree: returns the least-valued node, or
