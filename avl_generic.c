@@ -183,24 +183,20 @@ avl_tree_insert(struct avl_tree_root *root,
                 int (*cmp)(const struct avl_tree_node *,
                            const struct avl_tree_node *))
 {
-	struct avl_tree_node **cur_ptr = &root->avl_tree_node;
-	struct avl_tree_node  *cur = NULL;
+	struct avl_tree_link link;
+	struct avl_tree_node **current = &root->avl_tree_node;
 	int res;
 
-	while (*cur_ptr) {
-		cur = *cur_ptr;
-		res = (*cmp)(item, cur);
+	tree_search_for_each (&link, current) {
+		res = (*cmp)(item, *current);
 		if (res < 0)
-			cur_ptr = &cur->left;
+			current = &(*current)->left;
 		else if (res > 0)
-			cur_ptr = &cur->right;
+			current = &(*current)->right;
 		else
-			return cur;
+			return *current;
 	}
 
-	*cur_ptr = item;
-	item->parent = cur;
-	item->balance = 0;
-	avl_tree_rebalance_after_insert(root, item);
+	avl_tree_link_node(root, &link, item);
 	return NULL;
 }
